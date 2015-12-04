@@ -5,6 +5,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,13 +38,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
         EditText etInput = (EditText) findViewById(R.id.editText);
-        String tmp = service.load();
-        if (tmp != null) {
-            etInput.setText(tmp);
-            etInput.setSelection(tmp.length());
-            Toast.makeText(this, "成功恢复上次的输入内容", Toast.LENGTH_SHORT).show();
+        String tmp = null;
+        try{
+            Log.d("ddbug", "in try");
+            tmp = service.load();
+        }catch (Exception  e) {
+            e.printStackTrace();
         }
-
+        finally {
+            if (tmp != null) {
+                etInput.setText(tmp);
+                etInput.setSelection(tmp.length());
+                Toast.makeText(this, "成功恢复上次的输入内容", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     @Override
@@ -51,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         EditText etInput = (EditText) findViewById(R.id.editText);
         String inputText = etInput.getText().toString();
         String hint = "save failed";
-        if (service.save(inputText)) hint = "save success";
+        if (!(TextUtils.isEmpty(inputText)) && service.save(inputText)) hint = "save success";
         Toast.makeText(this, hint, Toast.LENGTH_SHORT).show();
     }
 

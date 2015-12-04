@@ -2,6 +2,7 @@ package dd.datasolution.service;
 
 import android.content.Context;
 
+import dd.datasolution.dao.DBImp;
 import dd.datasolution.dao.FileImp;
 import dd.datasolution.dao.SpImp;
 import dd.datasolution.dao.TestDao;
@@ -13,7 +14,7 @@ public class Service {
     private TestDao dao = null;
 
     public Service(Context context) {
-        dao = new SpImp(context);
+        dao = new DBImp(context);
     }
 
     public Boolean save(String data) {
