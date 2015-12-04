@@ -7,4 +7,6 @@ import android.content.Context;
  */
 public interface TestDao {
     Boolean save(String data);
+
+    String load();
 }

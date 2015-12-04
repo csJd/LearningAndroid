@@ -17,7 +17,7 @@ import dd.datasolution.service.Service;
 public class MainActivity extends AppCompatActivity {
 
 
-    Service  service = new Service(this);
+    Service service = new Service(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,15 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        EditText etInput = (EditText) findViewById(R.id.editText);
+        String tmp = service.load();
+        if (tmp != null) {
+            etInput.setText(tmp);
+            etInput.setSelection(tmp.length());
+            Toast.makeText(this, "成功恢复上次的输入内容", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
@@ -42,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         EditText etInput = (EditText) findViewById(R.id.editText);
         String inputText = etInput.getText().toString();
         String hint = "save failed";
-        if(service.save(inputText))  hint = "save success";
+        if (service.save(inputText)) hint = "save success";
         Toast.makeText(this, hint, Toast.LENGTH_SHORT).show();
     }
 
