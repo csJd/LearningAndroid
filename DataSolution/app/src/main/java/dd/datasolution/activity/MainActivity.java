@@ -1,6 +1,5 @@
-package dd.datasolution;
+package dd.datasolution.activity;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,34 +11,13 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import dd.datasolution.R;
+import dd.datasolution.service.Service;
 
 public class MainActivity extends AppCompatActivity {
 
-    // use /data/data/package_name/files/data
-    public void save( String data) {
-        //String data = "Data to save";
-        FileOutputStream out = null;
-        BufferedWriter writer = null;
-        try {
-            out = openFileOutput("data", Context.MODE_PRIVATE);
-            writer = new BufferedWriter(new OutputStreamWriter(out));
-            writer.write(data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (writer != null) {
-                    writer.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+
+    Service  service = new Service(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +41,9 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         EditText etInput = (EditText) findViewById(R.id.editText);
         String inputText = etInput.getText().toString();
-        save(inputText);
-        Toast.makeText(this, "save success", Toast.LENGTH_SHORT).show();
+        String hint = "save failed";
+        if(service.save(inputText))  hint = "save success";
+        Toast.makeText(this, hint, Toast.LENGTH_SHORT).show();
     }
 
     @Override
