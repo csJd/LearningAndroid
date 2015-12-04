@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="dd.contactapro.DetailActivity" >
+    <item android:id="@+id/mu_update" android:title="修改"></item>
+    <item android:id="@+id/mu_del" android:title="删除"></item>
+</menu>
