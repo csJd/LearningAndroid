@@ -34,7 +34,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "category_code integer)";
         db.execSQL(CREATE_BOOK);
         db.execSQL(CREATE_CATEGORY);
-        Toast.makeText(context, "Create database success", Toast.LENGTH_LONG).show();
         Log.d("ddtest", "Create database success");
     }
 
@@ -43,6 +42,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists book");
         db.execSQL("drop table if exists Category");
         onCreate(db);
-        Log.d("ddtest", "Upgrade from " + oldVersion + " to " + newVersion + " database success");
+        Log.d("ddtest", "Upgrade database from " + oldVersion + " to " + newVersion + " success");
     }
 }

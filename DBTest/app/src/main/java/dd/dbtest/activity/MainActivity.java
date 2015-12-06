@@ -1,5 +1,6 @@
 package dd.dbtest.activity;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,9 +12,17 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import dd.dbtest.R;
 import dd.dbtest.dao.DBHelper;
+import dd.dbtest.dao.DBImp;
+import dd.dbtest.model.Book;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,23 +39,36 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                intent.putExtra("DBVERSION", DBVERSION);
+                startActivity(intent);
             }
         });
 
+        ListView lvBook = (ListView) findViewById(R.id.lv_book);
+        DBImp dbImp = new DBImp(this, DBVERSION);
+        List<Book> books = dbImp.getAll();
 
-        Button btCre = (Button) findViewById(R.id.bt_cre);
-        btCre.setOnClickListener(new View.OnClickListener() {
+        List adpterList = new ArrayList();
 
-            @Override
-            public void onClick(View v) {
-                DBHelper helper = new DBHelper(MainActivity.this, DBVERSION);
-                //Log.d("ddtest", "test");
-                SQLiteDatabase db = helper.getReadableDatabase();
-                db.close();
+        if (books != null) {
+            for (Book book : books) {
+                HashMap map = new HashMap();
+                map.put("name", book.getName());
+                map.put("author", book.getAuthor() + " 著");
+                map.put("price", "￥" + book.getPrice());
+                map.put("pages", book.getPages() + "页");
+                map.put("pic", R.drawable.book);
+                adpterList.add(map);
             }
-        });
+        }
+
+        String[] from = {"name", "author", "price", "pages", "pic"};
+        int[] to = {R.id.tv_bookname, R.id.tv_author, R.id.tv_price, R.id.tv_pages, R.id.iv_cover};
+        SimpleAdapter adapter = new SimpleAdapter(this, adpterList, R.layout.book_item, from, to);
+
+        lvBook.setAdapter(adapter);
+
     }
 
     @Override

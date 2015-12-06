@@ -12,16 +12,8 @@
     tools:context=".activity.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
+    <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create test"
-        android:id="@+id/bt_cre"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:id="@+id/lv_book"/>
 </RelativeLayout>
