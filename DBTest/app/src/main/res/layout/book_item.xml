@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="60dp"
+        android:src="@drawable/book"
+        android:layout_height="90dp" />
+
+    <TextView
+        android:id="@+id/tv_bookname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/iv_cover"
+        android:text="Name"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/tv_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_cover"
+        android:layout_alignEnd="@+id/tv_bookname"
+        android:text="Price"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/tv_author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/iv_cover"
+        android:text="Author"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@+id/tv_bookname" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="pages"
+        android:id="@+id/tv_pages"
+        android:layout_below="@+id/tv_author"
+        android:layout_toEndOf="@+id/iv_cover" />
+</RelativeLayout>
