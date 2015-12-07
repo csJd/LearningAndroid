@@ -1,19 +1,24 @@
 package dd.dbtest.activity;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,9 +51,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ListView lvBook = (ListView) findViewById(R.id.lv_book);
-        DBImp dbImp = new DBImp(this, DBVERSION);
-        List<Book> books = dbImp.getAll();
-
+        final DBImp dbImp = new DBImp(this, DBVERSION);
+        final List<Book> books = dbImp.getAll();
         List adpterList = new ArrayList();
 
         if (books != null) {
@@ -57,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 map.put("name", book.getName());
                 map.put("author", book.getAuthor() + " 著");
                 map.put("price", "￥" + book.getPrice());
-                map.put("pages", book.getPages() + "页");
+                map.put("pages", book.getPages() + " 页");
                 map.put("pic", R.drawable.book);
                 adpterList.add(map);
             }
@@ -68,6 +72,42 @@ public class MainActivity extends AppCompatActivity {
         SimpleAdapter adapter = new SimpleAdapter(this, adpterList, R.layout.book_item, from, to);
 
         lvBook.setAdapter(adapter);
+
+        lvBook.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Book book = books.get(position);
+                Intent intent  = new Intent(MainActivity.this, UpdateActivity.class);
+                intent.putExtra("id", book.getId());
+                intent.putExtra("DBVERSION",DBVERSION);
+                startActivity(intent);
+            }
+        });
+
+        lvBook.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final Book book = books.get(position);
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("提示")
+                        .setMessage("确定要删除" + book.getName() + "吗?")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dbImp.delete(book.getId());
+                                Toast.makeText(MainActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .create();
+                alertDialog.show();
+                return false;
+            }
+        });
 
     }
 
