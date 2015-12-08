@@ -84,6 +84,28 @@ public class DBImp {
         return list;
     }
 
+    public List getByStr(String s){
+        dbHelper = new DBHelper(context, dbVersion);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        List list = new ArrayList();
+        Cursor cursor = db.rawQuery("select * from book where name like ? or author like ?"
+                ,new String[]{"%" + s + "%" , "%" + s + "%"});
+        if(cursor != null){
+            while(cursor.moveToNext()){
+                Book book =  new Book();
+                book.setId((cursor.getInt(cursor.getColumnIndex("id"))));
+                book.setName(cursor.getString(cursor.getColumnIndex("name")));
+                book.setAuthor(cursor.getString(cursor.getColumnIndex("author")));
+                book.setPages(cursor.getInt(cursor.getColumnIndex("pages")));
+                book.setPrice(cursor.getDouble(cursor.getColumnIndex("price")));
+                list.add(book);
+            }
+        }
+        db.close();
+        return list;
+    }
+
     public void delete(int id){
         dbHelper  = new DBHelper(context,  dbVersion);
         SQLiteDatabase  db = dbHelper.getWritableDatabase();

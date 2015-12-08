@@ -12,8 +12,15 @@
     tools:context=".activity.MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="输入作者或书名来查找..."
+        android:id="@+id/et_srh" />
+
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/lv_book"/>
+        android:id="@+id/lv_book"
+        android:layout_below="@+id/et_srh" />
 </RelativeLayout>

@@ -62,6 +62,7 @@
         android:id="@+id/et_pages"
         android:layout_alignTop="@+id/textView3"
         android:layout_alignEnd="@+id/et_author"
+        android:inputType="number"
         android:layout_toEndOf="@+id/textView3"
         android:hint="请输入页数.." />
 
