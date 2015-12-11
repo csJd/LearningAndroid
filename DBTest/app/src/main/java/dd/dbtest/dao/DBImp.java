@@ -63,7 +63,7 @@ public class DBImp {
         db.close();
     }
 
-    public List getAll(){
+/*    public List getAll(){
         dbHelper = new DBHelper(context, dbVersion);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -82,7 +82,7 @@ public class DBImp {
         }
         db.close();
         return list;
-    }
+    }*/
 
     public List getByStr(String s){
         dbHelper = new DBHelper(context, dbVersion);

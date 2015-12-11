@@ -40,7 +40,7 @@ public class AddActivity extends AppCompatActivity {
                 if(dbImp.save(book)){
                     Toast.makeText(AddActivity.this,"添加成功",Toast.LENGTH_SHORT).show();
                 }
-                else  Toast.makeText(AddActivity.this,"add failed",Toast.LENGTH_SHORT).show();
+                else  Toast.makeText(AddActivity.this,"添加失败",Toast.LENGTH_SHORT).show();
             }
         });
 
