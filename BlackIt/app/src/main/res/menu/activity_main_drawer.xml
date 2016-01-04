@@ -11,13 +11,13 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="短信拦截记录" />
         <item
-            android:id="@+id/nav_setsms"
+            android:id="@+id/nav_setkwd"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="设置短信拦截词" />
         <item
-            android:id="@+id/nav_setlist"
+            android:id="@+id/nav_addbl"
             android:icon="@drawable/ic_menu_manage"
-            android:title="设置黑名单" />
+            android:title="添加号码到黑名单" />
     </group>
 
     <item android:title="其它">
