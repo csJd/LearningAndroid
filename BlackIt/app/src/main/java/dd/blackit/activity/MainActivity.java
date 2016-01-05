@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -34,6 +33,7 @@ import java.util.List;
 import dd.blackit.R;
 import dd.blackit.dao.DbImp;
 import dd.blackit.model.BlacklistItem;
+import dd.blackit.service.CallReceiver;
 import dd.blackit.service.SmsReceiver;
 
 public class MainActivity extends AppCompatActivity
@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     EditText etTel;
     DbImp dbImp;
     SmsReceiver smsr;
+    CallReceiver calr;
     List<BlacklistItem> blacklist;
 
     protected void getBlacklist() {
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity
         dbImp = new DbImp(MainActivity.this, dbVersion);
 
         smsr = new SmsReceiver(MainActivity.this,dbVersion);
+        calr = new CallReceiver(MainActivity.this,dbVersion);
         Switch swOn = (Switch) findViewById(R.id.sw_on);
         swOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -108,21 +110,27 @@ public class MainActivity extends AppCompatActivity
                 if(isChecked){
                     IntentFilter filter = new IntentFilter();
                     filter.addAction("android.provider.Telephony.SMS_RECEIVED");
-                    filter.setPriority(2000);
+                    filter.setPriority(1000);
                     registerReceiver(smsr, filter);
+
+                    filter = new IntentFilter();
+                    filter.addAction("android.intent.action.PHONE_STATE");
+                    filter.setPriority(1000);
+                    registerReceiver(calr, filter);
+
                     Toast.makeText(MainActivity.this,"拦截服务已开启",Toast.LENGTH_SHORT).show();
                 }else {
                     unregisterReceiver(smsr);
+                    unregisterReceiver(calr);
                     Toast.makeText(MainActivity.this,"拦截服务已关闭",Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
         lvBl = (ListView) findViewById(R.id.lv_bl);
-
         lvBl.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {  //短按修改
                 BlacklistItem item = blacklist.get(position);
                 Intent intent = new Intent(MainActivity.this, ModifyBliActivity.class);
                 intent.putExtra("id", item.getId());
@@ -134,7 +142,7 @@ public class MainActivity extends AppCompatActivity
 
         lvBl.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) { //长按删除
                 final BlacklistItem item = blacklist.get(position);
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("提示")
@@ -148,7 +156,6 @@ public class MainActivity extends AppCompatActivity
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                             }
                         })
@@ -157,7 +164,6 @@ public class MainActivity extends AppCompatActivity
                 return false;
             }
         });
-
 
         etTel = (EditText) findViewById(R.id.et_tel);
         etTel.addTextChangedListener(new TextWatcher() {

@@ -108,7 +108,7 @@ public class DbImp {
     public boolean delKw(String kw){
         dbHelper  = new DbHelper(context,  dbVersion);
         SQLiteDatabase  db = dbHelper.getWritableDatabase();
-        db.execSQL("delete from book where kwd = ?", new String[]{kw});
+        db.execSQL("delete from keyword where kwd = ?", new String[]{kw});
         db.close();
         return true;
     }

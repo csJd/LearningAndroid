@@ -51,9 +51,9 @@ public class SmsReceiver extends BroadcastReceiver {
                     boolean flag = false;
                     for (BlacklistItem bli : blackList) {
                         if (phoneNum.contains(bli.getTel())&&bli.isCatSms()) {
-                            abortBroadcast();
                             Toast.makeText(context, "拦截了一条短信", Toast.LENGTH_SHORT).show();
                             flag = true;
+                            abortBroadcast();
                             break;
                         }
                     }
@@ -69,7 +69,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
                             Toast.makeText(context, "拦截了一条短信", Toast.LENGTH_SHORT).show();
                             String out = "Deny you!";    //自动回发一条短信
-                            smsm.sendTextMessage(phoneNum, null, out, null, null);
+                            //smsm.sendTextMessage(phoneNum, null, out, null, null);
                             Log.d("ddtest", "send 'Deny you'");
                             abortBroadcast();
                         }
