@@ -1,6 +1,10 @@
 package dd.blackit.activity;
 
+import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,9 +19,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +34,7 @@ import java.util.List;
 import dd.blackit.R;
 import dd.blackit.dao.DbImp;
 import dd.blackit.model.BlacklistItem;
+import dd.blackit.service.SmsReceiver;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,11 +43,12 @@ public class MainActivity extends AppCompatActivity
     ListView lvBl;
     EditText etTel;
     DbImp dbImp;
+    SmsReceiver smsr;
+    List<BlacklistItem> blacklist;
 
     protected void getBlacklist() {
         String tel = etTel.getText().toString();
-        List<BlacklistItem> blacklist = dbImp.getBl(tel);
-
+        blacklist = dbImp.getBl(tel);
         List adpterList = new ArrayList();
         if (blacklist != null) {
             for (BlacklistItem bi : blacklist) {
@@ -73,8 +83,9 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this, AddBlActivity.class);
+                intent.putExtra("dbVersion", dbVersion);
+                startActivity(intent);
             }
         });
 
@@ -88,9 +99,67 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         dbImp = new DbImp(MainActivity.this, dbVersion);
-        lvBl = (ListView) findViewById(R.id.lv_bl);
-        etTel = (EditText) findViewById(R.id.et_tel);
 
+        smsr = new SmsReceiver(MainActivity.this,dbVersion);
+        Switch swOn = (Switch) findViewById(R.id.sw_on);
+        swOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    IntentFilter filter = new IntentFilter();
+                    filter.addAction("android.provider.Telephony.SMS_RECEIVED");
+                    filter.setPriority(2000);
+                    registerReceiver(smsr, filter);
+                    Toast.makeText(MainActivity.this,"拦截服务已开启",Toast.LENGTH_SHORT).show();
+                }else {
+                    unregisterReceiver(smsr);
+                    Toast.makeText(MainActivity.this,"拦截服务已关闭",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        lvBl = (ListView) findViewById(R.id.lv_bl);
+
+        lvBl.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BlacklistItem item = blacklist.get(position);
+                Intent intent = new Intent(MainActivity.this, ModifyBliActivity.class);
+                intent.putExtra("id", item.getId());
+                intent.putExtra("tel", item.getTel());
+                intent.putExtra("dbVersion", dbVersion);
+                startActivity(intent);
+            }
+        });
+
+        lvBl.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final BlacklistItem item = blacklist.get(position);
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("提示")
+                        .setMessage("确定要从黑名单中删除" + item.getTel() + "吗?")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dbImp.delBi(item.getId());
+                                getBlacklist();
+                                Toast.makeText(MainActivity.this, "删除成功!", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .create();
+                alertDialog.show();
+                return false;
+            }
+        });
+
+
+        etTel = (EditText) findViewById(R.id.et_tel);
         etTel.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -107,7 +176,6 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-
     }
 
     @Override
@@ -144,7 +212,6 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -156,7 +223,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_addbl) {
             Intent intent = new Intent(MainActivity.this, AddBlActivity.class);
-            intent.getIntExtra("dbVersion", dbVersion);
+            intent.putExtra("dbVersion", dbVersion);
             startActivity(intent);
         } else if (id == R.id.nav_call) {
 
@@ -164,7 +231,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_setkwd) {
             Intent intent = new Intent(MainActivity.this, SetKwActivity.class);
-            intent.getIntExtra("dbVersion", dbVersion);
+            intent.putExtra("dbVersion", dbVersion);
             startActivity(intent);
         }
 

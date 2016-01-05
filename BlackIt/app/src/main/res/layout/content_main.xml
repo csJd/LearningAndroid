@@ -16,16 +16,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/lv_bl"
-        android:layout_below="@+id/et_tel"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/et_tel" />
 
     <EditText
         android:layout_width="wrap_content"
+        android:hint="输入号码可以查找条目"
         android:layout_height="wrap_content"
         android:id="@+id/et_tel"
-        android:layout_alignParentTop="true"
-        android:layout_alignEnd="@+id/lv_bl"
         android:inputType="phone"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/sw_on"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开启黑名单拦截服务"
+        android:id="@+id/sw_on"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:checked="false" />
 </RelativeLayout>

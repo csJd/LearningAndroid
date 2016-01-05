@@ -32,7 +32,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.execSQL(CREATE_BL);
         db.execSQL(CREATE_KW);
-
     }
 
     @Override

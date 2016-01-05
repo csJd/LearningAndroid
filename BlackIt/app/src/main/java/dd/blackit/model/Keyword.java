@@ -7,6 +7,10 @@ public class Keyword {
     int id;
     String kwd;
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

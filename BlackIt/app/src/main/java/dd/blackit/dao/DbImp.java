@@ -3,10 +3,8 @@ package dd.blackit.dao;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import dd.blackit.model.BlacklistItem;
 
 /**
@@ -41,11 +39,12 @@ public class DbImp {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         List list = new ArrayList();
-        Cursor cursor = db.rawQuery("select * from blacklist where tel like ? order by tel"
+        Cursor cursor = db.rawQuery("select * from blacklist where tel like ?"
                 , new String[]{"%" + s + "%"});
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 BlacklistItem bl = new BlacklistItem();
+                bl.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 bl.setTel(cursor.getString(cursor.getColumnIndex("tel")));
                 bl.setCatCall(cursor.getInt(cursor.getColumnIndex("catcall")) == 1);
                 bl.setCatSms(cursor.getInt(cursor.getColumnIndex("catsms")) == 1);
@@ -56,6 +55,22 @@ public class DbImp {
         return list;
     }
 
+    public void  modifyBi(BlacklistItem bi){
+        dbHelper = new DbHelper(context, dbVersion);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.execSQL("update blacklist set tel = ?, catcall = ?, catsms = ? where id = ?",
+                new String[]{bi.getTel(), bi.isCatCall()?"1":"0", bi.isCatSms()?"1":"0", String.valueOf(bi.getId())});
+        db.close();
+    }
+
+    public boolean delBi(int id){
+        dbHelper  = new DbHelper(context,  dbVersion);
+        SQLiteDatabase  db = dbHelper.getWritableDatabase();
+        db.execSQL("delete from book where id = ?", new String[]{String.valueOf(id)});
+        db.close();
+        return true;
+    }
+
     public boolean addKw(String kw) {
         dbHelper = new DbHelper(context, dbVersion);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -64,9 +79,11 @@ public class DbImp {
         try {
             db.execSQL(sql, new String[]{kw});
         } catch (Exception e) {
+            db.close();
             e.printStackTrace();
             return false;
         }
+        db.close();
         return true;
     }
 
@@ -86,5 +103,13 @@ public class DbImp {
         }
         db.close();
         return list;
+    }
+
+    public boolean delKw(String kw){
+        dbHelper  = new DbHelper(context,  dbVersion);
+        SQLiteDatabase  db = dbHelper.getWritableDatabase();
+        db.execSQL("delete from book where kwd = ?", new String[]{kw});
+        db.close();
+        return true;
     }
 }

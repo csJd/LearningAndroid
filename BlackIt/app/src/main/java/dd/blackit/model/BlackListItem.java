@@ -9,6 +9,10 @@ public class BlacklistItem {
     private boolean catCall;
     private boolean catSms;
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setTel(String tel) {
         this.tel = tel;
     }
