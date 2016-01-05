@@ -68,7 +68,7 @@ public class DbImp {
     public boolean delBi(int id){
         dbHelper  = new DbHelper(context,  dbVersion);
         SQLiteDatabase  db = dbHelper.getWritableDatabase();
-        db.execSQL("delete from book where id = ?", new String[]{String.valueOf(id)});
+        db.execSQL("delete from blacklist where id = ?", new String[]{String.valueOf(id)});
         db.close();
         return true;
     }
