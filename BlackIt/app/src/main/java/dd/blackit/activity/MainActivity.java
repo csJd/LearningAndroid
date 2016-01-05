@@ -102,14 +102,13 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         dbImp = new DbImp(MainActivity.this, dbVersion);
-
         smsr = new SmsReceiver(dbVersion);
         calr = new CallReceiver(dbVersion);
         Switch swOn = (Switch) findViewById(R.id.sw_on);
         swOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     IntentFilter filter = new IntentFilter();
                     filter.addAction("android.provider.Telephony.SMS_RECEIVED");
                     filter.setPriority(1000);
@@ -117,14 +116,13 @@ public class MainActivity extends AppCompatActivity
 
                     filter = new IntentFilter();
                     filter.addAction("android.intent.action.PHONE_STATE");
-                    filter.setPriority(1000);
                     registerReceiver(calr, filter);
 
-                    Toast.makeText(MainActivity.this,"拦截服务已开启",Toast.LENGTH_SHORT).show();
-                } else{
+                    Toast.makeText(MainActivity.this, "拦截服务已开启", Toast.LENGTH_SHORT).show();
+                } else {
                     unregisterReceiver(smsr);
                     unregisterReceiver(calr);
-                    Toast.makeText(MainActivity.this,"拦截服务已关闭",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "拦截服务已关闭", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -163,7 +161,7 @@ public class MainActivity extends AppCompatActivity
                         })
                         .create();
                 alertDialog.show();
-                return false;
+                return true;  //return true 才不会被click响应
             }
         });
 
@@ -187,6 +185,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            unregisterReceiver(smsr);
+            unregisterReceiver(calr);
+            Toast.makeText(MainActivity.this, "拦截服务已关闭", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         getBlacklist();
@@ -202,28 +212,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
