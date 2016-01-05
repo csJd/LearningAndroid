@@ -39,7 +39,7 @@ import dd.blackit.service.SmsReceiver;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private int dbVersion = 1;
+    private final int dbVersion = 1;
     ListView lvBl;
     EditText etTel;
     DbImp dbImp;
@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setTitle("黑名单列表");
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,8 +103,8 @@ public class MainActivity extends AppCompatActivity
 
         dbImp = new DbImp(MainActivity.this, dbVersion);
 
-        smsr = new SmsReceiver(MainActivity.this,dbVersion);
-        calr = new CallReceiver(MainActivity.this,dbVersion);
+        smsr = new SmsReceiver(dbVersion);
+        calr = new CallReceiver(dbVersion);
         Switch swOn = (Switch) findViewById(R.id.sw_on);
         swOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -119,7 +121,7 @@ public class MainActivity extends AppCompatActivity
                     registerReceiver(calr, filter);
 
                     Toast.makeText(MainActivity.this,"拦截服务已开启",Toast.LENGTH_SHORT).show();
-                }else {
+                } else{
                     unregisterReceiver(smsr);
                     unregisterReceiver(calr);
                     Toast.makeText(MainActivity.this,"拦截服务已关闭",Toast.LENGTH_SHORT).show();
@@ -226,15 +228,18 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.nav_addbl) {
             Intent intent = new Intent(MainActivity.this, AddBlActivity.class);
             intent.putExtra("dbVersion", dbVersion);
             startActivity(intent);
         } else if (id == R.id.nav_call) {
-
+            Intent intent = new Intent(MainActivity.this, CallsActivity.class);
+            intent.putExtra("dbVersion", dbVersion);
+            startActivity(intent);
         } else if (id == R.id.nav_sms) {
-
+            Intent intent = new Intent(MainActivity.this, SmssActivity.class);
+            intent.putExtra("dbVersion", dbVersion);
+            startActivity(intent);
         } else if (id == R.id.nav_setkwd) {
             Intent intent = new Intent(MainActivity.this, SetKwActivity.class);
             intent.putExtra("dbVersion", dbVersion);

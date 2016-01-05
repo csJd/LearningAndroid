@@ -48,6 +48,7 @@ public class SetKwActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_kw);
 
+        setTitle("设置拦截关键词");
         Intent intent = getIntent();
         dbVersion = intent.getIntExtra("dbVersion", 1);
         dbImp = new DbImp(SetKwActivity.this, dbVersion);
@@ -81,6 +82,8 @@ public class SetKwActivity extends AppCompatActivity {
                 else if (dbImp.addKw(kw)) {
                     getKwds();
                     Toast.makeText(SetKwActivity.this, "成功添加拦截关键词 " + kw + " !", Toast.LENGTH_SHORT).show();
+                    etKwd.setText("");
+                    getKwds();
                 } else Toast.makeText(SetKwActivity.this, "添加失败^_^", Toast.LENGTH_SHORT).show();
             }
         });

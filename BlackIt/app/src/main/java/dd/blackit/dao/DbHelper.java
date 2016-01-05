@@ -30,14 +30,29 @@ public class DbHelper extends SQLiteOpenHelper {
                 + "id integer primary key autoincrement, "
                 + "kwd text)";
 
+        final String CREATE_CALLS = "create table calls ("
+                + "id integer primary key autoincrement, "
+                + "tel text,"
+                + "time text)";
+
+        final String CREATE_SMSS = "create table smss ("
+                + "id integer primary key autoincrement, "
+                + "tel text,"
+                + "msg text,"
+                + "time text)";
+
         db.execSQL(CREATE_BL);
         db.execSQL(CREATE_KW);
+        db.execSQL(CREATE_CALLS);
+        db.execSQL(CREATE_SMSS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists blacklist");
         db.execSQL("drop table if exists keyword");
+        db.execSQL("drop table if exists calls");
+        db.execSQL("drop table if exists smss");
         onCreate(db);
     }
 }

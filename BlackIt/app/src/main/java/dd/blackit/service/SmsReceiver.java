@@ -9,23 +9,30 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import dd.blackit.dao.DbImp;
 import dd.blackit.model.BlacklistItem;
+import dd.blackit.model.Sms;
 
 public class SmsReceiver extends BroadcastReceiver {
 
     private DbImp dbImp;
+    private int dbVersion;
     private List<String> kwds;
     private List<BlacklistItem> blackList;
 
     public SmsReceiver() {}
+    public SmsReceiver(int dbVersion) {
+        this.dbVersion  =  dbVersion;
+    }
 
-    public SmsReceiver(Context context, int dbVersion) {
-        dbImp = new DbImp(context, dbVersion);
-        kwds = dbImp.getKw("");
-        blackList = dbImp.getBl("");
+    private void addSms(Sms sms){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM月dd日 HH:mm");//取得时间
+        sms.setTime(dateFormat.format(new Date(System.currentTimeMillis())));
+        dbImp.addSms(sms);
     }
 
     @Override
@@ -34,6 +41,10 @@ public class SmsReceiver extends BroadcastReceiver {
         // an Intent broadcast.
 
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
+            dbImp = new DbImp(context, dbVersion);
+            blackList = dbImp.getBl("");
+            kwds = dbImp.getKw("");
+
             SmsManager smsm = SmsManager.getDefault();
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
@@ -44,15 +55,18 @@ public class SmsReceiver extends BroadcastReceiver {
                 }
                 for (SmsMessage message : messages) {
                     String msg = message.getMessageBody();
-                    String phoneNum = message.getOriginatingAddress();
-                    Log.d("ddtest", "phoneNum = " + phoneNum);
-                    Log.d("ddtest", "body = " + msg);
+                    String tel = message.getOriginatingAddress();
+                    Sms sms = new Sms();
+                    sms.setMsg(msg);
+                    sms.setTel(tel);
 
+                    Log.d("ddtest", "phoneNum = " + tel + " msg = " + msg);
                     boolean flag = false;
                     for (BlacklistItem bli : blackList) {
-                        if (phoneNum.contains(bli.getTel())&&bli.isCatSms()) {
-                            Toast.makeText(context, "拦截了一条短信", Toast.LENGTH_SHORT).show();
+                        if (tel.contains(bli.getTel())&&bli.isCatSms()) {
                             flag = true;
+                            addSms(sms);
+                            Toast.makeText(context, "拦截了一条短信", Toast.LENGTH_SHORT).show();
                             abortBroadcast();
                             break;
                         }
@@ -62,13 +76,14 @@ public class SmsReceiver extends BroadcastReceiver {
                     for (String s : kwds) {
                         if (msg.toLowerCase().contains(s)) {
                             BlacklistItem bli = new BlacklistItem();
-                            bli.setTel(phoneNum);
+                            bli.setTel(tel);
                             bli.setCatSms(true);
                             bli.setCatCall(false);
-                            dbImp.addBl(bli);  //添加号码到黑名单
+                            dbImp.addBl(bli);  //添加号码到短信黑名单
 
+                            addSms(sms);
                             Toast.makeText(context, "拦截了一条短信", Toast.LENGTH_SHORT).show();
-                            String out = "Deny you!";    //自动回发一条短信
+                            //String out = "Deny you!";    //自动回发一条短信
                             //smsm.sendTextMessage(phoneNum, null, out, null, null);
                             Log.d("ddtest", "send 'Deny you'");
                             abortBroadcast();
@@ -77,6 +92,5 @@ public class SmsReceiver extends BroadcastReceiver {
                 }
             }
         }
-        // throw new UnsupportedOperationException("Not yet implemented");
     }
 }

@@ -3,9 +3,9 @@ package dd.blackit.model;
 /**
  * Created by Dd on 1/4 , 0004.
  */
-public class CatchedSms {
+public class Call {
     int id;
-    String tel, sms, time;
+    String tel, time;
 
     public int getId() {
         return id;
@@ -19,8 +19,8 @@ public class CatchedSms {
         return time;
     }
 
-    public String getSms() {
-        return sms;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setTel(String tel) {
@@ -29,9 +29,5 @@ public class CatchedSms {
 
     public void setTime(String time) {
         this.time = time;
-    }
-
-    public void setSms(String sms) {
-        this.sms = sms;
     }
 }

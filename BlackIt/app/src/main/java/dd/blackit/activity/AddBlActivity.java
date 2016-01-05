@@ -28,6 +28,7 @@ public class AddBlActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_bl);
 
+        setTitle("添加号码");
         Intent intent = getIntent();
         dbVersion = intent.getIntExtra("dbVersion", 1);
 
